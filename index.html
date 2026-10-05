@@ -1,0 +1,1483 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درس تفاعلي: التيار المتردد والتيار المستمر | الفيزياء الثانوية</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#38bdf8',
+                            ac: '#f43f5e',
+                            dc: '#06b6d4',
+                            gold: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-dc {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+        .glow-ac {
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+        }
+        .active-tab {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            color: #ffffff;
+            font-weight: 700;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- Top Header Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-rose-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold bg-gradient-to-r from-sky-400 via-rose-400 to-amber-300 bg-clip-text text-transparent">
+                        التيار المتردد (AC) والتيار المستمر (DC)
+                    </h1>
+                    <p class="text-xs text-slate-400 flex items-center gap-2">
+                        <span><i class="fa-solid fa-graduation-cap text-sky-400"></i> الفيزياء - الثالث الثانوي</span>
+                        <span class="text-slate-600">•</span>
+                        <span><i class="fa-solid fa-flag text-rose-400"></i> المنهج اليمني</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Progress Bar Tracker -->
+            <div class="flex items-center gap-4 w-full md:w-auto flex-1 max-w-xs">
+                <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden border border-slate-700">
+                    <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-rose-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+                <span id="progress-text" class="text-xs font-bold text-sky-400 whitespace-nowrap">0%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow flex flex-col md:flex-row gap-6">
+
+        <!-- Navigation Sidebar Tabs -->
+        <aside class="w-full md:w-64 flex-shrink-0 flex flex-col gap-2 glass-panel p-3 rounded-2xl h-fit">
+            <div class="text-xs font-bold text-slate-400 px-3 py-1 uppercase tracking-wider">أقسام الدرس التفاعلي</div>
+            
+            <button onclick="switchTab('welcome')" id="btn-welcome" class="nav-btn active-tab text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800">
+                <i class="fa-solid fa-house text-lg w-6 text-center"></i>
+                <span class="text-sm font-semibold">1. واجهة الأهداف</span>
+            </button>
+
+            <button onclick="switchTab('hook')" id="btn-hook" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-lightbulb text-lg w-6 text-center text-amber-400"></i>
+                <span class="text-sm font-semibold">2. التمهيد والتحدي</span>
+            </button>
+
+            <button onclick="switchTab('dc-sim')" id="btn-dc-sim" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-car-battery text-lg w-6 text-center text-cyan-400"></i>
+                <span class="text-sm font-semibold">3. محاكاة التيار المستمر DC</span>
+            </button>
+
+            <button onclick="switchTab('ac-sim')" id="btn-ac-sim" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-wave-square text-lg w-6 text-center text-rose-400"></i>
+                <span class="text-sm font-semibold">4. محاكاة التيار المتردد AC</span>
+            </button>
+
+            <button onclick="switchTab('waveforms')" id="btn-waveforms" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-chart-line text-lg w-6 text-center text-emerald-400"></i>
+                <span class="text-sm font-semibold">5. أنواع التيار المتردد</span>
+            </button>
+
+            <button onclick="switchTab('comparison')" id="btn-comparison" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-code-compare text-lg w-6 text-center text-purple-400"></i>
+                <span class="text-sm font-semibold">6. المميزات والمقارنة</span>
+            </button>
+
+            <button onclick="switchTab('games')" id="btn-games" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-gamepad text-lg w-6 text-center text-pink-400"></i>
+                <span class="text-sm font-semibold">7. الألعاب والألغاز</span>
+            </button>
+
+            <button onclick="switchTab('quiz')" id="btn-quiz" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-clipboard-question text-lg w-6 text-center text-amber-400"></i>
+                <span class="text-sm font-semibold">8. الاختبار التقييمي</span>
+            </button>
+
+            <button onclick="switchTab('summary')" id="btn-summary" class="nav-btn text-right px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 hover:bg-slate-800 text-slate-300">
+                <i class="fa-solid fa-sitemap text-lg w-6 text-center text-sky-400"></i>
+                <span class="text-sm font-semibold">9. خريطة المفاهيم</span>
+            </button>
+        </aside>
+
+        <!-- Dynamic Content Viewport -->
+        <section class="flex-1 flex flex-col">
+
+            <!-- TAB 1: Welcome & Objectives -->
+            <div id="tab-welcome" class="tab-content block space-y-6">
+                <div class="glass-panel p-8 rounded-3xl relative overflow-hidden border border-sky-500/30">
+                    <div class="absolute -left-10 -bottom-10 w-60 h-60 bg-sky-500/10 rounded-full blur-3xl"></div>
+                    <div class="absolute -right-10 -top-10 w-60 h-60 bg-rose-500/10 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-3">
+                            <i class="fa-solid fa-atom"></i> الفيزياء التطبيقية - المنهج اليمني
+                        </span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+                            مرحباً بك في المختبر التفاعلي للتيارات الكهربائية ⚡
+                        </h2>
+                        <p class="text-slate-300 text-base leading-relaxed mb-6">
+                            تطبيق تعليمي تفاعلي مصمم وفقاً لمنهج الفيزياء للصف الثالث الثانوي في الجمهورية اليمنية، يتيح لك استكشاف أسرار التيار المتردد (AC) والتيار المستمر (DC) من خلال المحاكاة الحية، والرسوم البيانية التفاعلية، والألعاب التعليمية.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="switchTab('hook')" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-sky-500/25 flex items-center gap-3 text-base transition-all transform hover:-translate-y-0.5">
+                                <span>ابدأ رحلة التعلم الآن</span>
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="glass-panel p-6 rounded-3xl">
+                    <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-rose-400"></i> أهداف الدرس التفاعلي:
+                    </h3>
+                    <p class="text-sm text-slate-400 mb-4">في نهاية هذا الدرس، ستكون قادراً على تحقيق المهارات والمفاهيم التالية بنجاح:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">التعريف بالتيارين</h4>
+                                <p class="text-xs text-slate-400">تعريف التيار المتردد (AC) والتيار المستمر (DC) بدقة علمية.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">التمييز والتفرقة</h4>
+                                <p class="text-xs text-slate-400">المقارنة بين AC و DC من حيث الثبات والتغير في الشدة والاتجاه.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">تفسير تغير التيار مع الزمن</h4>
+                                <p class="text-xs text-slate-400">فهم آلية تغير قيمة واتجاه التيار المتردد دورياً خلال الزمن.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">أنواع أشكال الموجات</h4>
+                                <p class="text-xs text-slate-400">التمتع بالقدرة على التمييز بين الموجة الجيبية، المنشارية، المثلثية، والرباعية.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">تحليل الرسوم البيانية</h4>
+                                <p class="text-xs text-slate-400">قراءة واستنتاج العلاقات بين الشدة والزمن $I-t$ والتردد $f$.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">التطبيقات والمميزات</h4>
+                                <p class="text-xs text-slate-400">معرفة أسباب تفضيل نقل التيار المتردد وتطبيقاته في شبكة المنازل والمحولات.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Hook & Question -->
+            <div id="tab-hook" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-8 rounded-3xl border border-amber-500/30">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-bold">
+                            ❓
+                        </span>
+                        <h2 class="text-2xl font-bold text-white">سؤال تمهيدي تفاعلي</h2>
+                    </div>
+
+                    <p class="text-lg text-slate-200 mb-6 leading-relaxed">
+                        هل التيار الكهربائي الذي يصل إلى مقبس الكهرباء في منزلك لإنارة المصباح وتشغيل الثلاجة هو نفسه التيار الصادر من بطارية الهاتف أو السيارة؟
+                    </p>
+
+                    <!-- Interactive Choice Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <button onclick="answerHook('same')" id="hook-btn-same" class="p-6 rounded-2xl bg-slate-800 border-2 border-slate-700 hover:border-amber-400 text-right transition-all transform hover:-translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="text-4xl">🔋</div>
+                                <div>
+                                    <h3 class="font-bold text-white text-lg mb-1">نعم، هما نفس التيار تماماً</h3>
+                                    <p class="text-xs text-slate-400">كلاهما عبارة عن حركة إلكترونات في أسلاك توصيل.</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button onclick="answerHook('different')" id="hook-btn-different" class="p-6 rounded-2xl bg-slate-800 border-2 border-slate-700 hover:border-amber-400 text-right transition-all transform hover:-translate-y-1">
+                            <div class="flex items-center gap-4">
+                                <div class="text-4xl">🏠</div>
+                                <div>
+                                    <h3 class="font-bold text-white text-lg mb-1">لا، يختلفان في السلوك وخصائص الحركة</h3>
+                                    <p class="text-xs text-slate-400">أحدهما مستمر ثابت والآخر متردد يتغير دورياً.</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Answer Feedback Box -->
+                    <div id="hook-feedback" class="hidden p-6 rounded-2xl transition-all duration-300">
+                        <!-- Content inserted dynamically -->
+                    </div>
+                </div>
+
+                <!-- Next Action -->
+                <div class="flex justify-end">
+                    <button onclick="switchTab('dc-sim')" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>الانتقال لمحاكاة التيار المستمر DC</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 3: DC Simulation -->
+            <div id="tab-dc-sim" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-cyan-500/30">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                        <div>
+                            <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                                Direct Current (DC)
+                            </span>
+                            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-car-battery text-cyan-400"></i> محاكاة التيار المستمر (DC)
+                            </h2>
+                        </div>
+                        
+                        <!-- Sim Controls -->
+                        <div class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
+                            <button onclick="toggleDCSim()" id="btn-dc-toggle" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2">
+                                <i class="fa-solid fa-pause"></i> <span>إيقاف</span>
+                            </button>
+                            <button onclick="resetDCSim()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-right"></i> <span>إعادة</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Area: Circuit & Graph side by side -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Circuit Visualizer -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+                            <div class="text-xs font-bold text-slate-400 mb-2 w-full flex justify-between">
+                                <span><i class="fa-solid fa-microchip text-cyan-400"></i> الدائرة الكهربائية للتيار المستمر</span>
+                                <span class="text-cyan-400">اتجاه واحد للالكترونات</span>
+                            </div>
+                            <canvas id="canvas-dc-circuit" width="400" height="240" class="w-full bg-slate-900 rounded-xl"></canvas>
+                        </div>
+
+                        <!-- Graph Visualizer -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+                            <div class="text-xs font-bold text-slate-400 mb-2 w-full flex justify-between">
+                                <span><i class="fa-solid fa-chart-line text-cyan-400"></i> رسم بياني: التيار مع الزمن (I - t)</span>
+                                <span id="dc-voltage-label" class="text-cyan-400">الجهد: 12V</span>
+                            </div>
+                            <canvas id="canvas-dc-graph" width="400" height="240" class="w-full bg-slate-900 rounded-xl"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Live Parameter Slider -->
+                    <div class="mt-6 bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <label for="slider-dc-v" class="text-sm font-bold text-slate-300 whitespace-nowrap">قيمة جهد البطارية (V):</label>
+                            <input type="range" id="slider-dc-v" min="1" max="24" value="12" step="1" oninput="updateDCSimParams()" class="w-full md:w-48 accent-cyan-400">
+                            <span id="dc-v-val" class="text-sm font-extrabold text-cyan-400 w-12">12V</span>
+                        </div>
+                        <p class="text-xs text-slate-400">
+                            <i class="fa-solid fa-info-circle text-cyan-400"></i> يولد المصدَر المستمر شحنات تسري في اتجاه واحد فقط وبقيمة ثابتة لا تتغير مع مرور الزمن.
+                        </p>
+                    </div>
+
+                    <!-- Physics Concept Explanation Box -->
+                    <div class="mt-6 p-4 rounded-2xl bg-cyan-950/30 border border-cyan-800/40">
+                        <h4 class="font-bold text-cyan-300 text-sm mb-2"><i class="fa-solid fa-book-open"></i> خصائص التيار المستمر (Direct Current - DC):</h4>
+                        <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                            <li><strong class="text-white">التعريف:</strong> هو تيار كهربائي ينساب في السلك في <strong>اتجاه واحد فقط</strong> وبشدة ثابتة بمرور الزمن.</li>
+                            <li><strong class="text-white">المصدر:</strong> البطاريات الكيميائية (الجافة والوسائل)، خلايا الطاقة الشمسية، ومولدات التيار المستمر.</li>
+                            <li><strong class="text-white">التمثيل البياني:</strong> خط مستقيم أفقي يوازي محور الزمن.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('hook')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('ac-sim')" class="bg-rose-500 hover:bg-rose-400 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>محاكاة التيار المتردد AC</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 4: AC Simulation -->
+            <div id="tab-ac-sim" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-rose-500/30">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                        <div>
+                            <span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                                Alternating Current (AC)
+                            </span>
+                            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-wave-square text-rose-400"></i> محاكاة التيار المتردد الجيبي (AC)
+                            </h2>
+                        </div>
+                        
+                        <!-- Sim Controls -->
+                        <div class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
+                            <button onclick="toggleACSim()" id="btn-ac-toggle" class="bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2">
+                                <i class="fa-solid fa-pause"></i> <span>إيقاف</span>
+                            </button>
+                            <button onclick="resetACSim()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-right"></i> <span>إعادة</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Area -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Circuit Visualizer -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+                            <div class="text-xs font-bold text-slate-400 mb-2 w-full flex justify-between">
+                                <span><i class="fa-solid fa-rotate text-rose-400"></i> حركة الإلكترونات والتوهج اللحظي</span>
+                                <span class="text-rose-400">اهتزاز يميناً ويساراً</span>
+                            </div>
+                            <canvas id="canvas-ac-circuit" width="400" height="240" class="w-full bg-slate-900 rounded-xl"></canvas>
+                        </div>
+
+                        <!-- Graph Visualizer -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+                            <div class="text-xs font-bold text-slate-400 mb-2 w-full flex justify-between">
+                                <span><i class="fa-solid fa-chart-area text-rose-400"></i> الرسم البياني $I = I_{\max} \sin(\omega t)$</span>
+                                <span id="ac-instant-label" class="text-rose-400">الشدة اللحظية: 0.0 A</span>
+                            </div>
+                            <canvas id="canvas-ac-graph" width="400" height="240" class="w-full bg-slate-900 rounded-xl"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Controls Sliders -->
+                    <div class="mt-6 bg-slate-900/60 p-4 rounded-2xl border border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3">
+                            <label for="slider-ac-amp" class="text-sm font-bold text-slate-300 whitespace-nowrap">القيمة العظمى ($I_{\max}$):</label>
+                            <input type="range" id="slider-ac-amp" min="1" max="10" value="5" step="0.5" oninput="updateACSimParams()" class="w-full accent-rose-500">
+                            <span id="ac-amp-val" class="text-sm font-extrabold text-rose-400 w-12">5 A</span>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <label for="slider-ac-freq" class="text-sm font-bold text-slate-300 whitespace-nowrap">التردد ($f$ - Hz):</label>
+                            <input type="range" id="slider-ac-freq" min="0.2" max="3" value="1" step="0.1" oninput="updateACSimParams()" class="w-full accent-rose-500">
+                            <span id="ac-freq-val" class="text-sm font-extrabold text-rose-400 w-12">1.0 Hz</span>
+                        </div>
+                    </div>
+
+                    <!-- Formula and Explanation -->
+                    <div class="mt-6 p-4 rounded-2xl bg-rose-950/30 border border-rose-800/40">
+                        <h4 class="font-bold text-rose-300 text-sm mb-2"><i class="fa-solid fa-square-root-variable"></i> معادلة التيار المتردد الجيبي:</h4>
+                        <p class="text-sm font-mono text-center text-white bg-slate-900/80 p-3 rounded-xl border border-slate-800 my-2">
+                            $$i(t) = I_{\max} \cdot \sin(2\pi f t) = I_{\max} \cdot \sin(\omega t)$$
+                        </p>
+                        <p class="text-xs text-slate-300 leading-relaxed mt-2">
+                            لاحظ كيف أن الشحنة تتزايد من الصفر إلى القيمة العظمى الموجبة، ثم تهبط للصفر، ثم تنعكس في الاتجاه المعاكس للوصول إلى القيمة العظمى السالبة وتعود للصفر، وتتكرر هذه الدورة الكاملة $f$ مرة في الثانية الواحدة.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('dc-sim')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('waveforms')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>أنواع أشكال التيار المتردد</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 5: Waveform Types -->
+            <div id="tab-waveforms" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-emerald-500/30">
+                    <div class="mb-4">
+                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                            أشكال موجات التيار المتردد
+                        </span>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> الأنواع المختلفة للتيار المتردد
+                        </h2>
+                        <p class="text-xs text-slate-400">اختر نوع الموجة لعرض الرسم البياني التفاعلي واستكشاف خصائصها وتطبيقها العملي:</p>
+                    </div>
+
+                    <!-- Wave Selector Buttons -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        <button onclick="selectWaveType('sine')" id="wave-btn-sine" class="wave-tab-btn active-tab p-3 rounded-2xl flex flex-col items-center gap-2 border border-slate-700 transition-all">
+                            <i class="fa-solid fa-wave-square text-lg"></i>
+                            <span class="text-xs font-bold">1. الجيبي (Sine)</span>
+                        </button>
+
+                        <button onclick="selectWaveType('sawtooth')" id="wave-btn-sawtooth" class="wave-tab-btn bg-slate-800 text-slate-300 p-3 rounded-2xl flex flex-col items-center gap-2 border border-slate-700 hover:border-emerald-400 transition-all">
+                            <i class="fa-solid fa-mountain text-lg"></i>
+                            <span class="text-xs font-bold">2. المنشاري (Sawtooth)</span>
+                        </button>
+
+                        <button onclick="selectWaveType('triangle')" id="wave-btn-triangle" class="wave-tab-btn bg-slate-800 text-slate-300 p-3 rounded-2xl flex flex-col items-center gap-2 border border-slate-700 hover:border-emerald-400 transition-all">
+                            <i class="fa-solid fa-play -rotate-90 text-lg"></i>
+                            <span class="text-xs font-bold">3. المثلثي (Triangular)</span>
+                        </button>
+
+                        <button onclick="selectWaveType('square')" id="wave-btn-square" class="wave-tab-btn bg-slate-800 text-slate-300 p-3 rounded-2xl flex flex-col items-center gap-2 border border-slate-700 hover:border-emerald-400 transition-all">
+                            <i class="fa-solid fa-vector-square text-lg"></i>
+                            <span class="text-xs font-bold">4. الرباعي / المربعي</span>
+                        </button>
+                    </div>
+
+                    <!-- Live Oscilloscope Screen -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+                        <div class="text-xs font-bold text-slate-400 mb-2 w-full flex justify-between">
+                            <span id="wave-title-display" class="text-emerald-400 font-bold text-sm">الموجة الجيبية (Sinusoidal Wave)</span>
+                            <span class="text-slate-500"><i class="fa-solid fa-tv"></i> راسم الذبذبات (Oscilloscope)</span>
+                        </div>
+                        <canvas id="canvas-waveform-scope" width="600" height="220" class="w-full bg-slate-900 rounded-xl"></canvas>
+                    </div>
+
+                    <!-- Dynamic Wave Info Box -->
+                    <div id="wave-info-card" class="mt-6 p-5 rounded-2xl bg-slate-800/80 border border-slate-700">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('ac-sim')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('comparison')" class="bg-purple-500 hover:bg-purple-400 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>المميزات والمقارنة الشاملة</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 6: Comparison & Transformer Advantage -->
+            <div id="tab-comparison" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-purple-500/30">
+                    <div class="mb-6">
+                        <span class="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                            المقارنة الهندسية والفيزيائية
+                        </span>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code-compare text-purple-400"></i> مميزات التيار المتردد وأوجه الاختلاف
+                        </h2>
+                    </div>
+
+                    <!-- Comparison Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-slate-700 mb-6">
+                        <table class="w-full text-right text-xs md:text-sm">
+                            <thead class="bg-slate-900 text-purple-300 border-b border-slate-700">
+                                <tr>
+                                    <th class="p-4">وجه المقارنة</th>
+                                    <th class="p-4 text-rose-400">التيار المتردد (AC)</th>
+                                    <th class="p-4 text-cyan-400">التيار المستمر (DC)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 bg-slate-800/40 text-slate-200">
+                                <tr>
+                                    <td class="p-4 font-bold text-white">الشدة والاتجاه</td>
+                                    <td class="p-4">متغير الشدة والاتجاه دورياً مع الزمن</td>
+                                    <td class="p-4">ثابت الشدة والاتجاه غالباً</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">إمكانية خفض ورفع الجهد</td>
+                                    <td class="p-4 text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> ممكنة بسهولة بواسطة المحول الكهربائي</td>
+                                    <td class="p-4 text-rose-400 font-bold"><i class="fa-solid fa-xmark"></i> غير ممكنة بالمحولات العادية</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">النقل لمسافات بعيدة</td>
+                                    <td class="p-4">ينقل بجهد عالٍ جداً مما يقلل القدرة المفقودة ($P_{\text{loss}} = I^2 R$)</td>
+                                    <td class="p-4">مكلف وينتج عنه فقد حراري كبير جداً في الأسلاك</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">التحويل بين النوعين</td>
+                                    <td class="p-4">يمكن تحويله إلى مستمر بجهيزة التقويم (الثنائيات الوصلية)</td>
+                                    <td class="p-4">تحويله لمتردد يتطلب أجهزة إنفرتر (Inverters) معقدة</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">الأثر الحراري</td>
+                                    <td class="p-4">له أثر حراري عند مروره في مقاومة أومية</td>
+                                    <td class="p-4">له أثر حراري أيضاً عند مروره في المقاومة</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">الطلاء والتحليل الكهربائي</td>
+                                    <td class="p-4 text-rose-400"><i class="fa-solid fa-xmark"></i> لا يصلح إطلاقاً (لأنه يلغي التأثير)</td>
+                                    <td class="p-4 text-emerald-400"><i class="fa-solid fa-check"></i> هو الوحيد الصالح للطلاء والتحليل</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Interactive Transformer Advantage Simulator -->
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="text-base font-bold text-amber-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt-lightning"></i> تجربة المحول: لماذا نستخدم التيار المتردد لنقل الطاقة؟
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4">
+                            رفع الجهد في خطوط النقل يقلل شدة التيار $I$ وبالتالي يقلل الفقد الحراري في خطوط التوصيل الممتدة لمئات الكيلومترات وفقاً لقانون جوليان: $P_{\text{loss}} = I^2 \cdot R$.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                            <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <label class="text-xs font-bold text-slate-300">اختر جهد النقل عند المحطة:</label>
+                                <div class="flex gap-2">
+                                    <button onclick="setVoltageTransmission(220)" id="btn-v-220" class="flex-1 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white">220 V (جهد منخفض)</button>
+                                    <button onclick="setVoltageTransmission(22000)" id="btn-v-22000" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300">22,000 V (جهد مرتفع)</button>
+                                </div>
+                            </div>
+
+                            <div id="transformer-result" class="p-4 rounded-xl bg-slate-800 border border-slate-700 text-xs space-y-2">
+                                <!-- Computed live -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('waveforms')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('games')" class="bg-pink-500 hover:bg-pink-400 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>الألعاب والأنشطة التفاعلية</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 7: Interactive Games -->
+            <div id="tab-games" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-pink-500/30">
+                    <div class="mb-4">
+                        <span class="bg-pink-500/20 text-pink-300 border border-pink-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                            نشاط ورشة عمل
+                        </span>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-pink-400"></i> لعبة التمييز وتصنيف الأجهزة
+                        </h2>
+                        <p class="text-xs text-slate-400">اضغط على الخيار الصحيح لتصنيف العبارة أو التطبيق في المكان المناسب:</p>
+                    </div>
+
+                    <!-- Sorting Challenge Game -->
+                    <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-slate-400">السؤال الحالي: <span id="game-step" class="text-pink-400">1 / 5</span></span>
+                            <span class="text-xs font-bold text-amber-400">النقاط: <span id="game-score">0</span> 🏆</span>
+                        </div>
+
+                        <div id="game-question-box" class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center mb-6">
+                            <p id="game-item-text" class="text-lg font-bold text-white">جارِ تحميل التحدي...</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button onclick="submitGameAnswer('AC')" class="p-4 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold flex items-center justify-center gap-3 text-base shadow-lg transition-all transform hover:-translate-y-0.5">
+                                <i class="fa-solid fa-wave-square"></i>
+                                <span>تيار متردد (AC)</span>
+                            </button>
+
+                            <button onclick="submitGameAnswer('DC')" class="p-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold flex items-center justify-center gap-3 text-base shadow-lg transition-all transform hover:-translate-y-0.5">
+                                <i class="fa-solid fa-car-battery"></i>
+                                <span>تيار مستمر (DC)</span>
+                            </button>
+                        </div>
+
+                        <div id="game-feedback" class="mt-4 p-4 rounded-xl hidden text-xs font-bold text-center"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('comparison')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('quiz')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>الاختبار النهائي الشامل</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 8: Comprehensive Quiz -->
+            <div id="tab-quiz" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-amber-500/30">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                                تقييم الفهم والتحصيل
+                            </span>
+                            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-question text-amber-400"></i> الاختبار النهائي الشامل (منهج الفيزياء اليمني)
+                            </h2>
+                        </div>
+                        <span id="quiz-timer" class="text-sm font-extrabold text-amber-400 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+                            ⏱️ 00:00
+                        </span>
+                    </div>
+
+                    <!-- Dynamic Quiz Container -->
+                    <div id="quiz-container" class="space-y-6">
+                        <!-- Questions dynamically loaded via JS -->
+                    </div>
+
+                    <!-- Quiz Controls / Results -->
+                    <div id="quiz-footer" class="mt-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+                        <button onclick="submitQuiz()" class="w-full md:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold px-8 py-3 rounded-xl shadow-lg transition-all">
+                            إنهاء الاختبار وإظهار النتيجة
+                        </button>
+                        <div id="quiz-score-display" class="text-sm font-bold text-slate-300">
+                            أجب على جميع الأسئلة ثم اضغط على زر الإنهاء.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('games')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="switchTab('summary')" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>خريطة المفاهيم وخاتمة الدرس</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 9: Concept Map & Summary -->
+            <div id="tab-summary" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl border border-sky-500/30">
+                    <div class="mb-6">
+                        <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs px-3 py-1 rounded-full font-bold inline-block mb-2">
+                            الملخص الشامل
+                        </span>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sitemap text-sky-400"></i> خريطة المفاهيم وتقييم الذات
+                        </h2>
+                    </div>
+
+                    <!-- Visual Concept Tree -->
+                    <div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-6">
+                        <div class="text-center">
+                            <span class="bg-gradient-to-r from-sky-400 to-rose-400 text-slate-950 font-black px-6 py-2 rounded-2xl text-base inline-block shadow-md">
+                                التيار الكهربائي (Electric Current)
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                            <!-- DC Branch -->
+                            <div class="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 space-y-3">
+                                <h3 class="text-lg font-bold text-cyan-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-car-battery"></i> التيار المستمر (DC)
+                                </h3>
+                                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                                    <li>اتجاه ثابت وشدة ثابتة.</li>
+                                    <li>مصدره: البطاريات الكيميائية والخلايا الشمسية.</li>
+                                    <li>استخدامه: الشحن، الأجهزة الإلكترونية، والطلاء الكهربائي.</li>
+                                </ul>
+                            </div>
+
+                            <!-- AC Branch -->
+                            <div class="p-5 rounded-2xl bg-rose-950/40 border border-rose-500/30 space-y-3">
+                                <h3 class="text-lg font-bold text-rose-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-wave-square"></i> التيار المتردد (AC)
+                                </h3>
+                                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                                    <li>متغير الشدة والاتجاه دورياً.</li>
+                                    <li>أنواعه: جيبي، منشاري، مثلثي، مربعي.</li>
+                                    <li>مميزاته: رفع وخفض الجهد بالمحول، قلّة المفقودات.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Self Assessment Check -->
+                    <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700">
+                        <h3 class="text-base font-bold text-sky-400 mb-3"><i class="fa-solid fa-user-check"></i> قائمة تقييم الفهم الذاتي:</h3>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <label class="flex items-center gap-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 accent-sky-400">
+                                <span>أستطيع التمييز بين حركة الإلكترونات في التيار المستمر والتيار المتردد.</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 accent-sky-400">
+                                <span>أعرف الفرق بين القيمة العظمى والقيمة اللحظية والقيمة الفعالة للتيار المتردد.</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 accent-sky-400">
+                                <span>أستطيع التعرف على أشكال الموجات الكهربائية الأربعة واستخداماتها.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="switchTab('quiz')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> العودة للاختبار
+                    </button>
+                    <button onclick="switchTab('welcome')" class="bg-gradient-to-r from-sky-500 to-rose-500 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-sm transition-all">
+                        <span>إعادة الدرس من البداية 🔄</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer Footer Information -->
+    <footer class="glass-panel border-t border-slate-800 py-4 px-4 text-center text-xs text-slate-500 mt-6">
+        <p>تطبيق الفيزياء التفاعلي - المنهج اليمني - الصف الثالث الثانوي | مادة الفيزياء - وحدة التيار المتردد</p>
+    </footer>
+
+    <!-- MATHJAX FOR MATH FORMULAS -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- MAIN INTERACTIVE JAVASCRIPT LOGIC -->
+    <script>
+        // Global Navigation & Progress State
+        const visitedTabs = new Set(['welcome']);
+        const totalTabsCount = 9;
+
+        function updateProgress() {
+            const percent = Math.round((visitedTabs.size / totalTabsCount) * 100);
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').innerText = percent + '%';
+        }
+
+        function switchTab(tabId) {
+            visitedTabs.add(tabId);
+            updateProgress();
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected tab
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            // Update sidebar buttons highlight
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active-tab');
+                btn.classList.add('text-slate-300');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active-tab');
+                activeBtn.classList.remove('text-slate-300');
+            }
+
+            // Trigger specific canvas redraws when switching
+            if (tabId === 'dc-sim') {
+                initDCSim();
+            } else if (tabId === 'ac-sim') {
+                initACSim();
+            } else if (tabId === 'waveforms') {
+                drawWaveformScope();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // 2. HOOK / WARMUP QUESTION LOGIC
+        // ==========================================
+        function answerHook(choice) {
+            const feedbackBox = document.getElementById('hook-feedback');
+            feedbackBox.classList.remove('hidden');
+
+            const btnSame = document.getElementById('hook-btn-same');
+            const btnDiff = document.getElementById('hook-btn-different');
+
+            if (choice === 'different') {
+                btnDiff.classList.add('border-emerald-500', 'bg-emerald-950/40');
+                btnSame.classList.remove('border-rose-500', 'bg-rose-950/40');
+                
+                feedbackBox.className = "p-6 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-200";
+                feedbackBox.innerHTML = `
+                    <h4 class="font-bold text-lg mb-2 text-emerald-300"><i class="fa-solid fa-circle-check"></i> إجابة ممتازة وصحيحة! 👏</h4>
+                    <p class="text-sm leading-relaxed">
+                        الكهرباء القادمة من المقبس المنزلي هي <strong>تيار متردد (AC)</strong> يتغير اتجاهه وشدته 50 إلى 60 مرة في الثانية، بينما البطارية تنتج <strong>تياراً مستمراً (DC)</strong> يسير في اتجاه ثابت وبقيمة ثابتة.
+                    </p>
+                `;
+            } else {
+                btnSame.classList.add('border-rose-500', 'bg-rose-950/40');
+                btnDiff.classList.remove('border-emerald-500', 'bg-emerald-950/40');
+
+                feedbackBox.className = "p-6 rounded-2xl bg-amber-950/50 border border-amber-500/40 text-amber-200";
+                feedbackBox.innerHTML = `
+                    <h4 class="font-bold text-lg mb-2 text-amber-300"><i class="fa-solid fa-circle-info"></i> توضيح هام:</h4>
+                    <p class="text-sm leading-relaxed">
+                        في الحقيقة هما يختلفان جذرياً! التيار في البطارية تسري إلكتروناته في خط مستقيم واتجاه واحد (DC)، بينما التيار في شبكة المنازل يغير اتجاهه باستمرار وبسرعة عالية جداً (AC). تابع المحاكاة القادمة لترى الفرق بنفسك!
+                    </p>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 3. DC SIMULATION (CANVAS & ANIMATION)
+        // ==========================================
+        let dcRunning = true;
+        let dcVoltage = 12;
+        let dcAnimFrame = null;
+        let dcElectrons = [];
+        let dcGraphTime = 0;
+        let dcGraphData = [];
+
+        function initDCSim() {
+            dcElectrons = [];
+            for (let i = 0; i < 20; i++) {
+                dcElectrons.push({
+                    pos: i * 25,
+                    speed: dcVoltage * 0.2
+                });
+            }
+            dcGraphData = [];
+            dcGraphTime = 0;
+            if (!dcAnimFrame) {
+                runDCSimLoop();
+            }
+        }
+
+        function toggleDCSim() {
+            dcRunning = !dcRunning;
+            const btn = document.getElementById('btn-dc-toggle');
+            btn.innerHTML = dcRunning ? '<i class="fa-solid fa-pause"></i> <span>إيقاف</span>' : '<i class="fa-solid fa-play"></i> <span>تشغيل</span>';
+        }
+
+        function resetDCSim() {
+            dcGraphData = [];
+            dcGraphTime = 0;
+            initDCSim();
+        }
+
+        function updateDCSimParams() {
+            dcVoltage = parseFloat(document.getElementById('slider-dc-v').value);
+            document.getElementById('dc-v-val').innerText = dcVoltage + 'V';
+            document.getElementById('dc-voltage-label').innerText = 'الجهد: ' + dcVoltage + 'V';
+        }
+
+        function runDCSimLoop() {
+            const canvasC = document.getElementById('canvas-dc-circuit');
+            const canvasG = document.getElementById('canvas-dc-graph');
+
+            if (canvasC && canvasG) {
+                const ctxC = canvasC.getContext('2d');
+                const ctxG = canvasG.getContext('2d');
+
+                if (dcRunning) {
+                    // Update Electrons Position
+                    const speed = dcVoltage * 0.15;
+                    dcElectrons.forEach(e => {
+                        e.pos = (e.pos + speed) % 360;
+                    });
+
+                    // Update Graph
+                    dcGraphTime += 0.05;
+                    dcGraphData.push({ t: dcGraphTime, i: dcVoltage });
+                    if (dcGraphData.length > 100) dcGraphData.shift();
+                }
+
+                // --- Draw Circuit ---
+                ctxC.clearRect(0, 0, canvasC.width, canvasC.height);
+
+                // Wire Loop Path
+                ctxC.strokeStyle = '#0284c7';
+                ctxC.lineWidth = 4;
+                ctxC.strokeRect(50, 40, 300, 160);
+
+                // Battery Symbol
+                ctxC.fillStyle = '#1e293b';
+                ctxC.fillRect(170, 25, 60, 30);
+                ctxC.fillStyle = '#06b6d4';
+                ctxC.font = 'bold 12px Tajawal';
+                ctxC.fillText('DC (' + dcVoltage + 'V)', 175, 45);
+
+                // Draw Electrons along loop
+                ctxC.fillStyle = '#38bdf8';
+                dcElectrons.forEach(e => {
+                    let x = 0, y = 0;
+                    if (e.pos < 300) { x = 50 + e.pos; y = 40; } // Top
+                    else if (e.pos < 460) { x = 350; y = 40 + (e.pos - 300); } // Right
+                    else if (e.pos < 760) { x = 350 - (e.pos - 460); y = 200; } // Bottom
+                    else { x = 50; y = 200 - (e.pos - 760); } // Left
+
+                    ctxC.beginPath();
+                    ctxC.arc(x, y, 5, 0, Math.PI * 2);
+                    ctxC.fill();
+                });
+
+                // Direction Arrow
+                ctxC.fillStyle = '#06b6d4';
+                ctxC.fillText('اتجاه التيار ➔', 170, 190);
+
+                // --- Draw Graph ---
+                ctxG.clearRect(0, 0, canvasG.width, canvasG.height);
+
+                // Axes
+                ctxG.strokeStyle = '#475569';
+                ctxG.lineWidth = 1;
+                ctxG.beginPath();
+                ctxG.moveTo(40, 20); ctxG.lineTo(40, 200); // Y
+                ctxG.moveTo(40, 120); ctxG.lineTo(380, 120); // X (Zero)
+                ctxG.stroke();
+
+                ctxG.fillStyle = '#94a3b8';
+                ctxG.font = '10px Tajawal';
+                ctxG.fillText('الشدة I', 10, 30);
+                ctxG.fillText('الزمن t', 350, 135);
+
+                // Plot DC Line
+                if (dcGraphData.length > 1) {
+                    ctxG.strokeStyle = '#06b6d4';
+                    ctxG.lineWidth = 3;
+                    ctxG.beginPath();
+
+                    dcGraphData.forEach((pt, idx) => {
+                        let x = 40 + idx * 3.3;
+                        let y = 120 - (pt.i * 3.5); // scale
+                        if (idx === 0) ctxG.moveTo(x, y);
+                        else ctxG.lineTo(x, y);
+                    });
+                    ctxG.stroke();
+                }
+            }
+
+            dcAnimFrame = requestAnimationFrame(runDCSimLoop);
+        }
+
+        // ==========================================
+        // 4. AC SIMULATION (CANVAS & ANIMATION)
+        // ==========================================
+        let acRunning = true;
+        let acAmp = 5;
+        let acFreq = 1.0;
+        let acAnimFrame = null;
+        let acPhase = 0;
+        let acGraphData = [];
+
+        function initACSim() {
+            acGraphData = [];
+            acPhase = 0;
+            if (!acAnimFrame) {
+                runACSimLoop();
+            }
+        }
+
+        function toggleACSim() {
+            acRunning = !acRunning;
+            const btn = document.getElementById('btn-ac-toggle');
+            btn.innerHTML = acRunning ? '<i class="fa-solid fa-pause"></i> <span>إيقاف</span>' : '<i class="fa-solid fa-play"></i> <span>تشغيل</span>';
+        }
+
+        function resetACSim() {
+            acGraphData = [];
+            acPhase = 0;
+            initACSim();
+        }
+
+        function updateACSimParams() {
+            acAmp = parseFloat(document.getElementById('slider-ac-amp').value);
+            acFreq = parseFloat(document.getElementById('slider-ac-freq').value);
+
+            document.getElementById('ac-amp-val').innerText = acAmp + ' A';
+            document.getElementById('ac-freq-val').innerText = acFreq.toFixed(1) + ' Hz';
+        }
+
+        function runACSimLoop() {
+            const canvasC = document.getElementById('canvas-ac-circuit');
+            const canvasG = document.getElementById('canvas-ac-graph');
+
+            if (canvasC && canvasG) {
+                const ctxC = canvasC.getContext('2d');
+                const ctxG = canvasG.getContext('2d');
+
+                if (acRunning) {
+                    acPhase += 0.05 * acFreq;
+                    let instantI = acAmp * Math.sin(acPhase);
+
+                    document.getElementById('ac-instant-label').innerText = 'الشدة اللحظية: ' + instantI.toFixed(2) + ' A';
+
+                    acGraphData.push(instantI);
+                    if (acGraphData.length > 100) acGraphData.shift();
+                }
+
+                let currentI = acAmp * Math.sin(acPhase);
+
+                // --- Draw AC Circuit ---
+                ctxC.clearRect(0, 0, canvasC.width, canvasC.height);
+
+                // Wire Loop
+                ctxC.strokeStyle = '#e11d48';
+                ctxC.lineWidth = 4;
+                ctxC.strokeRect(50, 40, 300, 160);
+
+                // AC Generator Icon
+                ctxC.fillStyle = '#1e293b';
+                ctxC.beginPath();
+                ctxC.arc(200, 40, 22, 0, Math.PI * 2);
+                ctxC.fill();
+                ctxC.strokeStyle = '#f43f5e';
+                ctxC.stroke();
+
+                ctxC.fillStyle = '#f43f5e';
+                ctxC.font = 'bold 12px Tajawal';
+                ctxC.fillText('~ AC', 188, 44);
+
+                // Oscillating Electrons
+                ctxC.fillStyle = '#fb7185';
+                for (let i = 0; i < 16; i++) {
+                    let baseX = 60 + i * 18;
+                    let offsetX = Math.sin(acPhase) * 15;
+                    ctxC.beginPath();
+                    ctxC.arc(baseX + offsetX, 200, 5, 0, Math.PI * 2);
+                    ctxC.fill();
+                }
+
+                // Bulb glow based on absolute current |I|
+                let bulbGlow = Math.abs(currentI) / 10;
+                ctxC.fillStyle = `rgba(253, 224, 71, ${0.2 + bulbGlow * 0.8})`;
+                ctxC.beginPath();
+                ctxC.arc(350, 120, 15 + bulbGlow * 10, 0, Math.PI * 2);
+                ctxC.fill();
+
+                ctxC.fillStyle = '#fef08a';
+                ctxC.fillText('مصباح', 335, 125);
+
+                // --- Draw AC Graph ---
+                ctxG.clearRect(0, 0, canvasG.width, canvasG.height);
+
+                // Axes
+                ctxG.strokeStyle = '#475569';
+                ctxG.lineWidth = 1;
+                ctxG.beginPath();
+                ctxG.moveTo(40, 20); ctxG.lineTo(40, 200); // Y
+                ctxG.moveTo(40, 110); ctxG.lineTo(380, 110); // X Zero
+                ctxG.stroke();
+
+                ctxG.fillStyle = '#94a3b8';
+                ctxG.font = '10px Tajawal';
+                ctxG.fillText('+I_max', 5, 30);
+                ctxG.fillText('-I_max', 5, 190);
+                ctxG.fillText('الزمن t', 350, 125);
+
+                // Sine Wave Plot
+                if (acGraphData.length > 1) {
+                    ctxG.strokeStyle = '#f43f5e';
+                    ctxG.lineWidth = 3;
+                    ctxG.beginPath();
+
+                    acGraphData.forEach((val, idx) => {
+                        let x = 40 + idx * 3.3;
+                        let y = 110 - (val * 8); // Scale
+                        if (idx === 0) ctxG.moveTo(x, y);
+                        else ctxG.lineTo(x, y);
+                    });
+                    ctxG.stroke();
+                }
+            }
+
+            acAnimFrame = requestAnimationFrame(runACSimLoop);
+        }
+
+        // ==========================================
+        // 5. WAVEFORM TYPES SCOPE VIEWER
+        // ==========================================
+        let currentWaveType = 'sine';
+
+        const waveDescriptions = {
+            sine: {
+                title: '1. الموجة الجيبية (Sinusoidal Wave)',
+                desc: 'الأكثر انتشاراً واستخداماً في الشبكات الكهربائية والمنازل. تتغير قيمتها بسلاسة تامة وتولدها المولدات الدوارة في محطات التوليد.',
+                use: 'الكهرباء المنزلية العامة، المصانع، والأجهزة الكهروميكانيكية.'
+            },
+            sawtooth: {
+                title: '2. الموجة المنشارية (Sawtooth Wave)',
+                desc: 'ترتفع القيمة بشكل خطي تدريجي ثم تهبط فجأة عمودياً إلى الصفر أو القيمة السالبة، وتشبه أسنان المنشار.',
+                use: 'دوائر مسح الشاشات الكاثودية (CRT)، ومولدات التردد في راسم الذبذبات.'
+            },
+            triangle: {
+                title: '3. الموجة المثلثية (Triangular Wave)',
+                desc: 'ترتفع بشكل خطي منتظم ثم تهبط بنفس المعدل الخطي بشكل متناظر ومستمر.',
+                use: 'دوائر معالجة الصوت والأجهزة الموسيقية الإلكترونية (Synthesizers) واختبار المجمعات الخطية.'
+            },
+            square: {
+                title: '4. الموجة الرباعية / المربعية (Square Wave)',
+                desc: 'تنتقل لحظياً بين قيمتين ثابتتين (موجبة وسالبة) وتقضي وقتاً متساوياً عند كل قيمة.',
+                use: 'الإلكترونيات الرقمية، أجهزة الكمبيوتر، الدوائر المنطقية، ومحولات الطاقة (Inverters).'
+            }
+        };
+
+        function selectWaveType(type) {
+            currentWaveType = type;
+            
+            // Highlight Buttons
+            document.querySelectorAll('.wave-tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            const active = document.getElementById('wave-btn-' + type);
+            if (active) {
+                active.classList.add('active-tab');
+                active.classList.remove('bg-slate-800', 'text-slate-300');
+            }
+
+            // Update Info Card
+            const info = waveDescriptions[type];
+            document.getElementById('wave-title-display').innerText = info.title;
+            document.getElementById('wave-info-card').innerHTML = `
+                <h4 class="font-bold text-emerald-300 text-sm mb-2"><i class="fa-solid fa-circle-info"></i> ${info.title}</h4>
+                <p class="text-xs text-slate-300 mb-3 leading-relaxed">${info.desc}</p>
+                <div class="text-xs font-bold text-emerald-400 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                    💡 <strong>التطبيق العملي:</strong> ${info.use}
+                </div>
+            `;
+
+            drawWaveformScope();
+        }
+
+        function drawWaveformScope() {
+            const canvas = document.getElementById('canvas-waveform-scope');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Grid Lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Center Axis
+            ctx.strokeStyle = '#475569';
+            ctx.beginPath(); ctx.moveTo(0, 110); ctx.lineTo(canvas.width, 110); ctx.stroke();
+
+            // Plot Waveform
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            for (let x = 0; x < canvas.width; x++) {
+                let t = x * 0.03;
+                let y = 110;
+
+                if (currentWaveType === 'sine') {
+                    y = 110 - Math.sin(t) * 60;
+                } else if (currentWaveType === 'sawtooth') {
+                    y = 110 - ((t % (Math.PI * 2)) / (Math.PI * 2) - 0.5) * 120;
+                } else if (currentWaveType === 'triangle') {
+                    y = 110 - (Math.abs((t % (Math.PI * 2)) - Math.PI) / Math.PI - 0.5) * 120;
+                } else if (currentWaveType === 'square') {
+                    y = Math.sin(t) >= 0 ? 50 : 170;
+                }
+
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        // ==========================================
+        // 6. TRANSFORMER SIMULATOR LOGIC
+        // ==========================================
+        function setVoltageTransmission(v) {
+            const btn220 = document.getElementById('btn-v-220');
+            const btn22000 = document.getElementById('btn-v-22000');
+            const resultBox = document.getElementById('transformer-result');
+
+            let powerNet = 220000; // 220 kW
+            let lineResist = 5; // 5 Ohms
+
+            let current = powerNet / v;
+            let lossPower = Math.pow(current, 2) * lineResist;
+
+            if (v === 220) {
+                btn220.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white';
+                btn22000.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300';
+
+                resultBox.className = 'p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs space-y-2';
+                resultBox.innerHTML = `
+                    <div class="font-bold text-rose-300">النتائج عند الجهد المنخفض (220V):</div>
+                    <div>شدة التيار المقابلة: <strong class="text-white">${current.toFixed(1)} A</strong></div>
+                    <div>القدرة الضائعة حرارياً ($I^2 R$): <strong class="text-rose-400 font-extrabold">${(lossPower / 1000).toFixed(1)} kW (خسارة فادحة!)</strong></div>
+                `;
+            } else {
+                btn22000.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white';
+                btn220.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300';
+
+                resultBox.className = 'p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-xs space-y-2';
+                resultBox.innerHTML = `
+                    <div class="font-bold text-emerald-300">النتائج عند رفع الجهد بالمحول (22,000V):</div>
+                    <div>شدة التيار المقابلة: <strong class="text-white">${current.toFixed(1)} A</strong></div>
+                    <div>القدرة الضائعة حرارياً ($I^2 R$): <strong class="text-emerald-400 font-extrabold">${lossPower.toFixed(1)} W (كفاءة ممتازة جدًا)</strong></div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 7. INTERACTIVE GAME LOGIC
+        // ==========================================
+        const gameItems = [
+            { text: "الكهرباء القادمة من المقابس الجدارية في المنزل", ans: "AC" },
+            { text: "التيار الناتج من بطارية الهاتف الذكي", ans: "DC" },
+            { text: "التيار الذي يمكن رفعه أو خفضه باستخدام المحولات الكهربائية", ans: "AC" },
+            { text: "التيار المستخدم حصرياً في عملية الطلاء بالكهرباء والتحليل الكيميائي", ans: "DC" },
+            { text: "التيار الناتج من خلايا الألواح الشمسية الكهروضوئية", ans: "DC" }
+        ];
+
+        let currentGameIdx = 0;
+        let gameScore = 0;
+
+        function initGame() {
+            currentGameIdx = 0;
+            gameScore = 0;
+            showGameItem();
+        }
+
+        function showGameItem() {
+            if (currentGameIdx < gameItems.length) {
+                document.getElementById('game-step').innerText = (currentGameIdx + 1) + ' / ' + gameItems.length;
+                document.getElementById('game-score').innerText = gameScore;
+                document.getElementById('game-item-text').innerText = gameItems[currentGameIdx].text;
+                document.getElementById('game-feedback').classList.add('hidden');
+            } else {
+                document.getElementById('game-item-text').innerText = `🎉 أحسنت! أنهيت التحدي بنجاح وحصلت على ${gameScore} من ${gameItems.length * 10} نقطة!`;
+                document.getElementById('game-feedback').classList.add('hidden');
+            }
+        }
+
+        function submitGameAnswer(userAns) {
+            if (currentGameIdx >= gameItems.length) return;
+
+            const feedback = document.getElementById('game-feedback');
+            feedback.classList.remove('hidden');
+
+            if (userAns === gameItems[currentGameIdx].ans) {
+                gameScore += 10;
+                feedback.className = "mt-4 p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center";
+                feedback.innerText = "إجابة صحيحة! أحسنت 🎯 (+10 نقاط)";
+            } else {
+                feedback.className = "mt-4 p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-300 text-xs font-bold text-center";
+                feedback.innerText = "إجابة خاطئة! حاول التركيز في الخصائص الفيزيائية. ❌";
+            }
+
+            document.getElementById('game-score').innerText = gameScore;
+            setTimeout(() => {
+                currentGameIdx++;
+                showGameItem();
+            }, 1500);
+        }
+
+        // ==========================================
+        // 8. COMPREHENSIVE QUIZ DATA & ENGINE
+        // ==========================================
+        const quizQuestions = [
+            {
+                q: "1. يُعرف التيار المتردد (AC) بأنه تيار يتغير في:",
+                options: [
+                    "الشدة فقط ويثبت في الاتجاه",
+                    "الاتجاه فقط ويثبت في الشدة",
+                    "الشدة والاتجاه دورياً مع الزمن",
+                    "لا يتغير إطلاقاً في أي منهما"
+                ],
+                correct: 2
+            },
+            {
+                q: "2. السبب الرئيسي لتفضيل نقل التيار المتردد لمسافات بعيدة هو:",
+                options: [
+                    "سهولة رفعه بالمحول الكهربائي لتقليل المفقودات الحرارية $I^2 R$",
+                    "أنه أقل خطراً من التيار المستمر عند الملامسة",
+                    "أنه لا يحتاج إلى أسلاك توصيل سميكة إطلاقاً",
+                    "أنه ينتج مباشرة من البطاريات الكيميائية"
+                ],
+                correct: 0
+            },
+            {
+                q: "3. الجهاز الوحيد الذي يصلح لقياس الشدة الفعالة للتيار المتردد هو:",
+                options: [
+                    "الجلفانومتر ذو الملف المتحرك",
+                    "الأميتر ذو السلك الساخن (الفراري)",
+                    "الفولتميتر المغناطيسي",
+                    "الميكروأميتر الملفي"
+                ],
+                correct: 1
+            },
+            {
+                q: "4. أي أشكال موجات التيار المتردد التالية تستخدم في دوائر مسح الشاشات ورواسم الذبذبات؟",
+                options: [
+                    "الموجة الجيبية",
+                    "الموجة المنشارية",
+                    "الموجة الرباعية",
+                    "الموجة الدائرية"
+                ],
+                correct: 1
+            },
+            {
+                q: "5. التيار الكهربائي الصادر عن البطاريات الكيميائية في السيارات والمصابيح هو تيار:",
+                options: [
+                    "متردد جيبي",
+                    "متردد مربعي",
+                    "مستمر (DC)",
+                    "متغير التردد"
+                ],
+                correct: 2
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((item, qIdx) => {
+                const qBox = document.createElement('div');
+                qBox.className = "p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3";
+                
+                let optionsHtml = '';
+                item.options.forEach((opt, oIdx) => {
+                    optionsHtml += `
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-400/50 cursor-pointer text-xs md:text-sm text-slate-300 transition-all">
+                            <input type="radio" name="quiz-q-${qIdx}" value="${oIdx}" class="accent-amber-400">
+                            <span>${opt}</span>
+                        </label>
+                    `;
+                });
+
+                qBox.innerHTML = `
+                    <h3 class="font-bold text-white text-sm md:text-base">${item.q}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        ${optionsHtml}
+                    </div>
+                `;
+                container.appendChild(qBox);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            quizQuestions.forEach((item, qIdx) => {
+                const selected = document.querySelector(`input[name="quiz-q-${qIdx}"]:checked`);
+                if (selected && parseInt(selected.value) === item.correct) {
+                    score++;
+                }
+            });
+
+            const percent = Math.round((score / quizQuestions.length) * 100);
+            const display = document.getElementById('quiz-score-display');
+            
+            if (percent >= 80) {
+                display.innerHTML = `<span class="text-emerald-400 font-extrabold text-base">🎉 ممتاز جداً! درجتك: ${score} من ${quizQuestions.length} (${percent}%) - متفوق في الفيزياء!</span>`;
+            } else if (percent >= 50) {
+                display.innerHTML = `<span class="text-amber-400 font-extrabold text-base">👍 جيد جداً! درجتك: ${score} من ${quizQuestions.length} (${percent}%) - يمكنك مراجعة المحاكاة للوصول للدرجة النهائة.</span>`;
+            } else {
+                display.innerHTML = `<span class="text-rose-400 font-extrabold text-base">⚠️ درجتك: ${score} من ${quizQuestions.length} (${percent}%) - يُنصح بإعادة قراءة المفاهيم وتجربة المحاكاة مجدداً.</span>`;
+            }
+        }
+
+        // Initialize App on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            selectWaveType('sine');
+            initGame();
+            renderQuiz();
+            setVoltageTransmission(220);
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
+
+```
+لقد تم إنشاء التطبيق التعليمي التفاعلي الشامل لدرس **«التيار المتردد والتيار المستمر»** وفق المنهج اليمني المخصص للمرحلة الثانوية.
+### 🌟 أبرز ما يحتويه التطبيق التفاعلي:
+ 1. **واجهة وأهداف تفاعلية**: تتيح للطالب متابعة نسبة تقدمه ومتابعة الأهداف التعليمية.
+ 2. **تمهيد وسؤال تفاعلي**: يثير التفكير للتمييز بين مقبس المنزل وبطارية الهاتف.
+ 3. **محاكاة حية للتيار المستمر (DC)**: توضح حركة الإلكترونات أحادية الاتجاه والرسم البياني الأفقي الثابت مع التحكم في قيمة الجهد.
+ 4. **محاكاة حية للتيار المتردد (AC)**: توضح اهتزاز الإلكترونات وتغير توهج المصباح مع رسم موجة الشدة اللحظية والمعادلة الجيبية.
+ 5. **مستكشف أنواع التيار المتردد (Oscilloscope)**: يعرض أشكال الموجات الأربعة (الجيبي، المنشاري، المثلثي، والمربعي) مع الشرح والتطبيقات العلمية لكل نوع.
+ 6. **تجربة المحول المتردد ومختبر نقل الطاقة**: توضح سبب نقل التيار بجهد عالٍ لتقليل المفقودات الحرارية I^2 R.
+ 7. **لعبة تصنيف وتحدي تفاعلية**: لاختبار فهم الطالب السريع بالتنقل بين التطبيقات.
+ 8. **اختبار تقييمي شامل**: مغذى بأسئلة اختيار من متعدد مع التقييم الفوري وحساب الدرجة.
+ 9. **خريطة المفاهيم وقائمة التقييم الذاتي**: لتثبيت المعلومات قبل إنهاء الدرس.
+```
+
+```
